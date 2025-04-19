@@ -1,4 +1,4 @@
-# Проект Pythia Parser Alabama
+# Проект Pythia Parser Arizona
 
 ## Установка и запуск
 
