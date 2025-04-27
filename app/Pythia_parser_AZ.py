@@ -12,7 +12,7 @@ async def main():
     channel = await get_channel()
     queue = await channel.declare_queue(QUEUE_NAME, durable=True)
     logger.info(f" [*] Waiting for messages in queue '{QUEUE_NAME}'")
-    await queue.consume(handle_message, auto_ack=False)
+    await queue.consume(handle_message)
 
     try:
         await asyncio.Event().wait()
