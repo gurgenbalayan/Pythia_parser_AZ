@@ -54,14 +54,14 @@ async def handle_message(message: aio_pika.IncomingMessage):
             payload = json.loads(message.body.decode())
             action = payload.get("action")
             states = payload.get("states")
-
+            state = payload.get("state")
             connection = await aio_pika.connect_robust(**RABBITMQ_SETTINGS)
             channel = await connection.channel()
             await channel.declare_queue(RESULTS_QUEUE_NAME, durable=True)
 
             if action == "search" and (STATE in states or not states):
                 await handle_search(payload, channel)
-            elif action == "details" and (STATE in states or not states):
+            elif action == "details" and state == STATE:
                 await handle_details(payload, channel)
             else:
                 logger.warning(f"Unknown action: {action}")
