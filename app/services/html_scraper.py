@@ -20,7 +20,7 @@ async def fetch_company_details(url: str) -> dict:
                 return await parse_html_details(html)
     except Exception as e:
         logger.error(f"Error fetching data for query '{url}': {e}")
-        return []
+        return {}
 async def fetch_company_data(query: str) -> list[dict]:
     url = "https://ecorp.azcc.gov/EntitySearch/Search"
     payload = f"model%5BPageID%5D=0&model%5BPageCount%5D=0&model%5BTotalResults%5D=0&model%5BTotalPages%5D=0&model%5BMessage%5D=&model%5BSearchCriteria%5D%5BSearchCriteria%5D=&model%5BSearchCriteria%5D%5BSearchType%5D=&model%5BSearchCriteria%5D%5BSearchValue%5D=&model%5BSearchCriteria%5D%5BquickSearch%5D%5BStartsWith%5D=true&model%5BSearchCriteria%5D%5BquickSearch%5D%5BContains%5D=false&model%5BSearchCriteria%5D%5BquickSearch%5D%5BExactMatch%5D=false&model%5BSearchCriteria%5D%5BquickSearch%5D%5BBusinessName%5D={query}&model%5BSearchCriteria%5D%5BquickSearch%5D%5BAgentName%5D=&model%5BSearchCriteria%5D%5BquickSearch%5D%5BPrincipalName%5D=&model%5BSearchCriteria%5D%5BquickSearch%5D%5BBusinessId%5D=&model%5BSearchCriteria%5D%5BquickSearch%5D%5BbarcodeNumber%5D=&model%5BSearchCriteria%5D%5BquickSearch%5D%5BFilingNumber%5D=&model%5BSearchCriteria%5D%5BquickSearch%5D%5BMicroFilmLocation%5D=&model%5BSearchCriteria%5D%5BquickSearch%5D%5BBusinessModal%5D=&model%5BSearchCriteria%5D%5BadvancedSearch%5D%5BBusinessTypeID%5D=All&model%5BSearchCriteria%5D%5BadvancedSearch%5D%5BBusinessStatusID%5D=All&model%5BSearchCriteria%5D%5BadvancedSearch%5D%5BNameType%5D=All&model%5BSearchCriteria%5D%5BadvancedSearch%5D%5BStreetAddress1%5D=&model%5BSearchCriteria%5D%5BadvancedSearch%5D%5BZipCode%5D=&model%5BSearchCriteria%5D%5BadvancedSearch%5D%5BCity%5D=&model%5BSearchCriteria%5D%5BadvancedSearch%5D%5BCounty%5D=All&model%5BSearchCriteria%5D%5BadvancedSearch%5D%5BZip4%5D=&model%5BSearchCriteria%5D%5BadvancedSearch%5D%5BFields%5D=businessentitytype%3D%7C%7Cbusinessstatus%3DE%7C%7CnameType%3D%7C%7CCounty%3D%7C%7CStreetAddress1%3D%7C%7Ccity%3D%7C%7Czipcode%3D%7C%7CisSimilarSoundingBusiness%3D0%7C%7CisSimilarSoundingAgent%3D0%7C%7CisSimilarSoundingAgent%3D0%7C%7CisSimilarSoundingPrincipal%3D0&model%5BSearchResults%5D=&"
@@ -108,6 +108,7 @@ async def parse_html_details(html: str) -> dict:
     input_tag = soup.find('input', attrs={'value': 'Document History'})
     onclick_attr = input_tag.get('onclick')
     match = re.search(r'submitFilingHistory\((\d+)\)', onclick_attr)
+    document_images = []
     if match:
         number = match.group(1)
         document_images = await get_documents(number)
