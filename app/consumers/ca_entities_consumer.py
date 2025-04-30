@@ -55,6 +55,7 @@ async def handle_message(message: aio_pika.IncomingMessage):
             action = payload.get("action")
             states = payload.get("states")
             state = payload.get("state")
+
             connection = await aio_pika.connect_robust(**RABBITMQ_SETTINGS)
             channel = await connection.channel()
             await channel.declare_queue(RESULTS_QUEUE_NAME, durable=True)
